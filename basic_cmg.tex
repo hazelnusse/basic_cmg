@@ -1,0 +1,71 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[
+  colorlinks=true,
+  pdfencoding=auto,
+  pdfauthor={Dale L. Peterson},
+  pdfkeywords={dynamics; control; control moment gyroscope},
+  pdftitle={C-1 dynamics model},
+  xetex
+]{hyperref}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\begin{document}
+\title{Simplified CMG dynamics}
+\author{Dale L. Peterson\\
+        Lit Motors Inc.\\
+        \texttt{luke@litmotors.com}}
+\date{\today}
+
+\maketitle
+\abstract{This document presents the equations of motion for a flywheel with
+    roll, gimbal, and spin degrees of freedom. The roll, gimbal, and spin
+    axes are assumed mutually perpendicular and to intersect at the system
+    mass center.  The inertia of the flywheel enclosure is ignored to highlight
+    the effect of the rotating flywheel.  The gimbal axis is actuated with an
+    external torque while the roll axis is not actuated directly.}
+
+\section{Introduction}
+Consider the inertial frame $A$ with $\hat{a}_z$ pointed down and parallel to
+gravity.  The roll frame $B$ is oriented relative to $A$ by a simple rotation
+about the $\hat{a}_x$ by roll angle $q_0$. The enclosure fixed frame $C$ is
+oriented relative to $B$ by a simple rotation about $\hat{b}_y$ by gimbal angle
+$q_1$. The flywheel fixed frame $D$ is oriented relative to the enclosure frame
+$C$ by a simple rotation about $\hat{c}_z$ by flywheel angle $q_2$.
+
+The inertia of the flywheel is $I \hat{c}_x \hat{c}_x + I \hat{c}_y \hat{c}_y +
+J \hat{c}_z \hat{c}_z$.  This inertia is expressed in the the enclosure fixed
+frame $C$ rather than the flywheel fixed $D$ frame; this is possible since the
+flywheel is inertially symmetric about its spin axis. The equations of motion
+are
+\begin{equation}
+    \begin{bmatrix}
+        (J - I) \sin^2 q_1 + I & 0 & J \sin q_1 \\
+        0 & I & 0 \\
+        J \sin q_1 & 0 & J
+    \end{bmatrix}
+    \begin{bmatrix}
+        \dot{u}_0 \\ \dot{u}_1 \\ \dot{u}_2
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        -2 (J - I) \sin q_1 \cos q_1 u_0 u_1  - J \cos q_1 u_1 u_2 \\
+        (J - I) \sin q_1 \cos q_1 u_0^2 + J \cos q_1 u_0 u_2 + \tau \\
+        -J \cos q_1 u_0 u_1
+    \end{bmatrix}
+\end{equation}
+Solving for $\dot{u}$ yields
+\begin{equation}
+    \begin{bmatrix}
+        \dot{u}_0 \\ \dot{u}_1 \\ \dot{u}_2
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        (2 - \frac{J}{I}) \tan q_1 u_0 u_1 - \frac{J}{I \cos q_1} u_1 u_2 \\
+        (\frac{J}{I} - 1) \sin q_1 \cos q_1 u_0^2 + \frac{J}{I} \cos q_1 u_0 u_2 + \frac{\tau}{I} \\
+        \left((\frac{J}{I} - 1}) \sin q_1 \tan q_1 - \frac{1}{\cos q_1}\right) u_0 u_1 + \frac{J}{I} \tan q_1 u_1 u_2 \\
+    \end{bmatrix}
+\end{equation}
+\end{document}
