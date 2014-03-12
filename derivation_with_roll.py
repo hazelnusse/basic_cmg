@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from sympy.physics.mechanics import (dynamicsymbols, inertia, KanesMethod,
-    Point, ReferenceFrame, RigidBody, mprint)
-from sympy import symbols
+    Point, ReferenceFrame, RigidBody, mlatex, mprint)
+from sympy import symbols, solve, Matrix
 
 t, m, g = symbols('t m g')                      # Time, total mass, gravity
 
@@ -48,18 +48,28 @@ torque_force_list = [(O, m*g*A.z),              # Gravitational force
 # Form equations of motion
 KM = KanesMethod(A, q, u, kindiffs)
 fr, frstar = KM.kanes_equations(torque_force_list, body_list)
-frstar.simplify()
-print("Pre simplification")
-mprint(fr)
-mprint(frstar)
 
 # Simplifying assumptions
 simplifications = {IFxx: symbols('I'),          # Flywheel transverse inertias
-                   IFyy: symbols('I')}          # assumed to be equal
+                   IFyy: symbols('I'),          # assumed to be equal
+                   IFzz: symbols('J'),
+                   Ixx: 0,
+                   Iyy: 0,
+                   Izz: 0}
 frstar = frstar.subs(simplifications)
-frstar.simplify()
-print("Post simplification")
-mprint(fr)
-mprint(frstar)
 
+MM = -frstar.jacobian(ud)
+MM.simplify()
+forcing = fr + frstar.subs({ud[0]: 0, ud[1]:0, ud[2]:0}).expand()
+forcing.simplify()
+print("Mass matrix:")
+mprint(MM)
+print("forcing vector:")
+mprint(forcing)
 
+eqns = MM * Matrix(ud) - forcing
+udots = solve(eqns, ud)
+for udi in ud:
+    mprint(udi)
+    print(":")
+    mprint(udots[udi])
